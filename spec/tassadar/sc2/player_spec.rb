@@ -40,6 +40,22 @@ describe Tassadar::SC2::Player do
       @player.team.should == 0
     end
   end
+  
+  context 'HOTS NA SC2 Replay' do
+    let(:replay) { Tassadar::SC2::Replay.new(File.join(REPLAY_DIR+"/hots/", "StarStation1.SC2Replay")) }
+    subject  { replay.players.first }
+    
+    it "should set the name" do
+      subject.name.should == "Thrice"
+    end
+
+    it "should set the id" do
+      subject.id.should == 484096
+    end
+
+    
+    
+  end
 
   context 'EU SC2 Replay' do
     let(:replay) { Tassadar::SC2::Replay.new(File.join(REPLAY_DIR, 'eu_replay.SC2Replay')) }

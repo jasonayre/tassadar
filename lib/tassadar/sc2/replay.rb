@@ -16,6 +16,7 @@ module Tassadar
         @details = Details.read(@mpq.read_file("replay.details"))
 
         @players = @details.data[0].map {|h| Player.new(h, @attributes.attributes)}
+        @players.map{|p| p.gateway = @details.data[10][0][6..7]}
         @game = Game.new(self)
       end
     end
