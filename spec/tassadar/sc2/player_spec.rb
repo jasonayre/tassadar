@@ -41,19 +41,29 @@ describe Tassadar::SC2::Player do
     end
   end
   
-  context 'HOTS NA SC2 Replay' do
-    let(:replay) { Tassadar::SC2::Replay.new(File.join(REPLAY_DIR+"/hots/", "StarStation1.SC2Replay")) }
+  context 'HOTS NA SC2 Replay', :vcr do
+    let(:replay) { Tassadar::SC2::Replay.new(File.join(REPLAY_DIR+"/hots/", "StarStation1.SC2Replay"), nil, with_rankings: true) }
     subject  { replay.players.first }
     
-    it "should set the name" do
+    it "should have name" do
       subject.name.should == "Thrice"
     end
 
-    it "should set the id" do
+    it "should have id" do
       subject.id.should == 484096
     end
-
     
+    it "should have bnet url" do
+      subject.bnet_url.should == "http://us.battle.net/sc2/en/profile/484096/1/Thrice/"
+    end
+
+    it "should have ladder url" do
+      subject.ladder_url.should == "http://us.battle.net/sc2/en/profile/484096/1/Thrice/ladder/leagues#current-rank"
+    end
+    
+    it "should have leagues" do
+      subject.leagues.length.should == 2
+    end
     
   end
 

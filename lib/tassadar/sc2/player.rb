@@ -1,7 +1,11 @@
+require 'tassadar'
+require 'tassadar/sc2/league'
 module Tassadar
   module SC2
     class Player
-      attr_accessor :name, :id, :won, :color, :chosen_race, :actual_race, :handicap, :team, :gateway
+      
+      attr_accessor :name, :id, :won, :color, :chosen_race, :actual_race, :handicap, :team, 
+      :gateway, :bnet_url, :ladder_url, :league, :leagues
 
       def initialize(details_hash, attributes)
         @name = details_hash[0]
@@ -18,6 +22,36 @@ module Tassadar
       def winner?
         @won
       end
+      
+      def bnet_url
+        @bnet_url ||= "http://#{gateway.downcase}.battle.net/sc2/en/profile/#{id}/1/#{name}/"
+      end
+      
+      def ladder_url
+        @ladder_url ||= "#{bnet_url}ladder/leagues#current-rank"
+      end
+      
+      def crawl_ranking_data
+        response = HTTParty.get(ladder_url)
+        response_html = Nokogiri::HTML(response.body)
+        meta = response_html.at_css("#profile-right .data-label").inner_html.split("</span>")
+        season = meta.first.split(" <span>").first.strip
+        league = meta[1].split("<span>").first.strip.split(" ").last
+        gametype = meta[1].split("<span>").first.strip.split(" ").first
+        division_name = meta[1].split("<span>").last.strip.gsub!("Division ", "")
+        
+        leagues_html = response_html.at_css("#profile-menu")
+        
+        @leagues = leagues_html.search(".submenu a").map do |node|
+          league_url = "#{bnet_url}ladder/#{node[:href]}"
+          league_detail = node.text.split("Rank").first
+          league_gametype = league_detail.split(" ").first
+          league_level = league_detail.split(" ").last
+          league_rank = node.text.split("Rank").last.strip
+          league = League.new(url: league_url, gametype: league_gametype, level: league_level, rank: league_rank)
+        end
+      end
+            
     end
   end
 end

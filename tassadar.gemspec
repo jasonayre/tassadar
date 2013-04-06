@@ -21,5 +21,11 @@ Gem::Specification.new do |s|
 
   s.add_dependency("bindata")
   s.add_dependency("rbzip2")
+  s.add_dependency("nokogiri")
+  s.add_dependency("httparty")
+  s.add_dependency("i18n")
+  s.add_dependency("activesupport", '>= 3.0.0')
   s.add_development_dependency("pry")
+  s.add_development_dependency("vcr")
+  s.add_development_dependency("fakeweb")
 end
