@@ -1,9 +1,9 @@
 module Tassadar
   module SC2
     class Game
-      attr_accessor :map, :time, :winner, :speed, :type, :category, :season, :gateway
+      attr_accessor :map, :time, :winner, :speed, :type, :category, :season, :gateway, :players, :league
 
-      def initialize(replay)
+      def initialize(replay, players)
         @winner = replay.players.select {|p| p.won}.first
         @time = convert_windows_to_ruby_date_time(replay.details.data[5], replay.details.data[6])
         @map = replay.details.data[1]
@@ -17,6 +17,13 @@ module Tassadar
         
         @season = replay.details.data[0][0][1][1][2..3]
         @gateway = replay.details.data[10][0][6..7]
+        
+        @players = players
+        
+      end
+      
+      def determine_league
+        @league ||= @players.first.leagues.detect{|league| league.gametype == @type}.level
       end
 
       private
@@ -24,6 +31,7 @@ module Tassadar
         unix_time = (time - 116444735995904000) / (10 ** 7)
         @time = Time.at(unix_time)
       end
+      
     end
   end
 end

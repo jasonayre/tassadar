@@ -32,21 +32,23 @@ describe Tassadar::SC2::Game do
     end
   end
 
-  context 'HOTS NA SC2 Replay' do
-    let(:replay) { Tassadar::SC2::Replay.new(File.join(REPLAY_DIR+"/hots/", "StarStation1.SC2Replay")) }
-    # subject  { replay.players.first }
+  context 'HOTS NA SC2 Replay', :vcr do
+    let(:replay) { Tassadar::SC2::Replay.new(File.join(REPLAY_DIR+"/hots/", "KorhalCity123.SC2Replay"), with_rankings: true) }
     
     it "should have a season" do
       replay.game.season.should == "S2"
     end
     
-    it "shoud specify gateway" do
+    it "should specify gateway" do
       replay.game.gateway.should == "US"
     end
-
-    # it "should set the id" do
-    #   subject.id.should == 484096
-    # end
     
+    it "should have two players" do
+      replay.game.players.length.should == 2
+    end
+    
+    it "should have league equal to gold" do
+      replay.game.league.should == "Gold"
+    end
   end
 end
