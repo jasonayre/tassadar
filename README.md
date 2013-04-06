@@ -93,3 +93,25 @@ replay.players.first
 ## Copyright
 
 Copyright (c) 2011-2013 Agora Games. See LICENSE.txt for further details.
+
+## jasonayre Fork Additions
+
+1. Added HOTS replays and tests
+2. Removed ability to pass open file to replay game, pass filename instead
+3. Added with_rankings: true option when initializing replay, which will spider bnet and return additional player data such as player leagues, and a relative replay league, determined by player position in ladder relative to gametype 
+
+### Getting league data examples
+
+```ruby
+replay = Tassadar::SC2::Replay.new('myreplay.SC2Replay, with_rankings: true)
+replay.league
+player1_leagues = replay.players.first.leagues
+```
+
+(Really it is returning league data, but I thought with_rankings made more sense)
+
+The league of the 'replay game' is determined based off of the gametype of the replay (1v1, 2v2), and the first player in the games relative league. There is the chance that the players could be in separate leagues, but then you either have to round up or round down somehow, so I just went with first player in the game.
+
+### Running the league tests
+
+The league tests were recorded with VCR cassetes which are checked into repo, so the tests are relative to my standing at the time of commiting the code. If you delete them, current standing will have to be updated in sc2/league_spec.rb
